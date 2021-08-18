@@ -19,6 +19,7 @@
 		2C00CC7826CD51BF0045DC23 /* BalanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00CC7726CD51BF0045DC23 /* BalanceView.swift */; };
 		2C00CC7D26CD51C70045DC23 /* BalanceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00CC7C26CD51C70045DC23 /* BalanceService.swift */; };
 		2C00CC8526CD52390045DC23 /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C00CC8426CD52390045DC23 /* UIViewController+Extensions.swift */; };
+		2CF473C526CD823A008EEDC8 /* PublisherButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF473C426CD823A008EEDC8 /* PublisherButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		2C00CC7726CD51BF0045DC23 /* BalanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalanceView.swift; sourceTree = "<group>"; };
 		2C00CC7C26CD51C70045DC23 /* BalanceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalanceService.swift; sourceTree = "<group>"; };
 		2C00CC8426CD52390045DC23 /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
+		2CF473C426CD823A008EEDC8 /* PublisherButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublisherButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +109,7 @@
 		2C00CC3826CD51770045DC23 /* CombineIntro */ = {
 			isa = PBXGroup;
 			children = (
+				2CF473C326CD820D008EEDC8 /* CustomViews */,
 				2C00CC6C26CD518D0045DC23 /* Balance */,
 				2C00CC3926CD51770045DC23 /* AppDelegate.swift */,
 				2C00CC3B26CD51770045DC23 /* SceneDelegate.swift */,
@@ -146,6 +149,14 @@
 				2C00CC7C26CD51C70045DC23 /* BalanceService.swift */,
 			);
 			path = Balance;
+			sourceTree = "<group>";
+		};
+		2CF473C326CD820D008EEDC8 /* CustomViews */ = {
+			isa = PBXGroup;
+			children = (
+				2CF473C426CD823A008EEDC8 /* PublisherButton.swift */,
+			);
+			path = CustomViews;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -280,6 +291,7 @@
 			files = (
 				2C00CC6E26CD51AF0045DC23 /* BalanceState.swift in Sources */,
 				2C00CC7D26CD51C70045DC23 /* BalanceService.swift in Sources */,
+				2CF473C526CD823A008EEDC8 /* PublisherButton.swift in Sources */,
 				2C00CC7326CD51B90045DC23 /* BalanceViewController.swift in Sources */,
 				2C00CC8526CD52390045DC23 /* UIViewController+Extensions.swift in Sources */,
 				2C00CC7826CD51BF0045DC23 /* BalanceView.swift in Sources */,

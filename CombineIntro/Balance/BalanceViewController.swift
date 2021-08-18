@@ -5,6 +5,7 @@
 //  Created by Junio Cesar Moquiuti on 18/08/21.
 //
 
+import Combine
 import Foundation
 import UIKit
 
@@ -17,6 +18,7 @@ class BalanceViewController: UIViewController {
     }
     private var notificationCenterTokens: [NSObjectProtocol] = []
     private let formatDate: (Date) -> String
+    private var butonCancellable: AnyCancellable?
 
     init(
         service: BalanceService,
@@ -38,11 +40,10 @@ class BalanceViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        rootView.refreshButton.addTarget(
-            self,
-            action: #selector(refreshBalance),
-            for: .touchUpInside
-        )
+        butonCancellable = rootView.refreshButton.touchUpInsidePublisher
+            .sink(receiveValue: { [weak self] _ in
+                self?.refreshBalance()
+            })
 
         notificationCenterTokens.append(
             NotificationCenter.default.addObserver(
@@ -95,9 +96,7 @@ class BalanceViewController: UIViewController {
             rootView.activityIndicator.stopAnimating()
         }
         rootView.valueLabel.text = state.formattedBalance
-        rootView.valueLabel.alpha = state.isRedacted
-            ? BalanceView.alphaForRedactedValueLabel
-            : 1
+        rootView.valueLabel.alpha = state.isRedacted ? BalanceView.alphaForRedactedValueLabel : 1
         rootView.infoLabel.text = state.infoText(formatDate: formatDate)
         rootView.infoLabel.textColor = state.infoColor
         rootView.redactedOverlay.isHidden = !state.isRedacted
