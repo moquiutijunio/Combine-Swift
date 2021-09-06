@@ -13,20 +13,20 @@ final class PublisherButton: UIButton {
     // MARK: - Properties
     private var butonCancellable: AnyCancellable?
     
-    private lazy var touchUpInsideSubject: PassthroughSubject<UIEvent, Never> = {
-        let subject = PassthroughSubject<UIEvent, Never>()
+    private lazy var touchUpInsideSubject: PassthroughSubject<Void, Never> = {
+        let subject = PassthroughSubject<Void, Never>()
         addTarget(self, action: #selector(handleTap), for: .touchUpInside)
         return subject
     }()
     
-    var touchUpInsidePublisher: AnyPublisher<UIEvent, Never> {
+    var touchUpInsidePublisher: AnyPublisher<Void, Never> {
         return touchUpInsideSubject
             .eraseToAnyPublisher()
     }
 }
 // MARK: - Handlers
 extension PublisherButton {
-    @objc private func handleTap(event: UIEvent) {
-        touchUpInsideSubject.send(event)
+    @objc private func handleTap() {
+        touchUpInsideSubject.send()
     }
 }

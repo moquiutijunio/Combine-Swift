@@ -213,8 +213,9 @@ private extension BalanceViewControllerTests {
     ) -> (BalanceViewController, BalanceServiceStub) {
         let service = BalanceServiceStub()
         service.result = serviceResult
+        let viewModel = BalanceViewModel(service: service)
         let sut = BalanceViewController(
-            service: service,
+            viewModel: viewModel,
             formatDate: { _ in Self.formattedDate }
         )
         _ = sut.view

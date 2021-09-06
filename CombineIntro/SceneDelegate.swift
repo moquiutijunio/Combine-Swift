@@ -18,7 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = BalanceViewController(service: FakeBalanceService())
+        window?.rootViewController = BalanceViewController(viewModel: BalanceViewModel(service: FakeBalanceService()))
         window?.makeKeyAndVisible()
         window?.windowScene = windowScene
     }

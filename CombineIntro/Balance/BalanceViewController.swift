@@ -10,20 +10,20 @@ import Foundation
 import UIKit
 
 @dynamicMemberLookup
-class BalanceViewController: UIViewController {
+final class BalanceViewController: UIViewController {
+    
+    // MARK: - Properties
     private let rootView = BalanceView()
-    private let service: BalanceService
-    private var state = BalanceViewState() {
-        didSet { updateView() }
-    }
+    private let viewModel: BalanceViewModel
     private let formatDate: (Date) -> String
-    private lazy var cancellable = Set<AnyCancellable>()
+    private lazy var cancellables = Set<AnyCancellable>()
 
+    // MARK: - Life Cycle
     init(
-        service: BalanceService,
+        viewModel: BalanceViewModel,
         formatDate: @escaping (Date) -> String = BalanceViewState.relativeDateFormatter.string(from:)
     ) {
-        self.service = service
+        self.viewModel = viewModel
         self.formatDate = formatDate
         super.init(nibName: nil, bundle: nil)
     }
@@ -38,74 +38,60 @@ class BalanceViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        rootView.refreshButton
-            .touchUpInsidePublisher
-            .sink { [weak self] _ in
-                self?.refreshBalance()
-            }
-            .store(in: &cancellable)
-        
-        NotificationCenter.default
-            .publisher(for: UIApplication.willResignActiveNotification)
-            .sink { [weak self ]_ in
-                self?.state.isRedacted = true
-            }
-            .store(in: &cancellable)
-        
-        NotificationCenter.default
-            .publisher(for: UIApplication.didBecomeActiveNotification)
-            .sink { [weak self ]_ in
-                self?.state.isRedacted = false
-            }
-            .store(in: &cancellable)
+        binds()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        refreshBalance()
+        viewModel.viewDidAppear()
     }
 
-    @objc private func refreshBalance() {
-        state.didFail = false
-        state.isRefreshing = true
-        service.refreshBalance { [weak self] result in
-            self?.handleResult(result)
-        }
+    // MARK: - Methods
+    private func binds() {
+        viewModel.stateSubject
+            .sink { [weak self] _ in self?.updateView() }
+            .store(in: &cancellables)
+        
+        rootView.refreshButton
+            .touchUpInsidePublisher
+            .sink(receiveValue: viewModel.refreshBalance)
+            .store(in: &cancellables)
+        
+        NotificationCenter.default
+            .publisher(for: UIApplication.willResignActiveNotification)
+            .sink { [viewModel] _ in viewModel.updateState(isRedacted: true) }
+            .store(in: &cancellables)
+        
+        NotificationCenter.default
+            .publisher(for: UIApplication.didBecomeActiveNotification)
+            .sink { [viewModel] _ in viewModel.updateState(isRedacted: false) }
+            .store(in: &cancellables)
     }
-
-    private func handleResult(_ result: Result<BalanceResponse, Error>) {
-        state.isRefreshing = false
-        do {
-            state.lastResponse = try result.get()
-        } catch {
-            state.didFail = true
-        }
-    }
-
+    
     private func updateView() {
-        rootView.refreshButton.isHidden = state.isRefreshing
-        if state.isRefreshing {
+        rootView.refreshButton.isHidden = viewModel.stateSubject.value.isRefreshing
+        if viewModel.stateSubject.value.isRefreshing {
             rootView.activityIndicator.startAnimating()
         } else {
             rootView.activityIndicator.stopAnimating()
         }
-        rootView.valueLabel.text = state.formattedBalance
-        rootView.valueLabel.alpha = state.isRedacted ? BalanceView.alphaForRedactedValueLabel : 1
-        rootView.infoLabel.text = state.infoText(formatDate: formatDate)
-        rootView.infoLabel.textColor = state.infoColor
-        rootView.redactedOverlay.isHidden = !state.isRedacted
+        rootView.valueLabel.text = viewModel.stateSubject.value.formattedBalance
+        rootView.valueLabel.alpha = viewModel.stateSubject.value.isRedacted ? BalanceView.alphaForRedactedValueLabel : 1
+        rootView.infoLabel.text = viewModel.stateSubject.value.infoText(formatDate: formatDate)
+        rootView.infoLabel.textColor = viewModel.stateSubject.value.infoColor
+        rootView.redactedOverlay.isHidden = !viewModel.stateSubject.value.isRedacted
 
         view.setNeedsLayout()
     }
 }
 
+// MARK: - SwiftUI Preview
 #if DEBUG
 import SwiftUI
 
 struct BalanceViewController_Previews: PreviewProvider {
     static private func makePreview() -> some View {
-        BalanceViewController(service: FakeBalanceService())
+        BalanceViewController(viewModel: BalanceViewModel(service: FakeBalanceService()))
             .staticRepresentable
     }
 
