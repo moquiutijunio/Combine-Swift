@@ -16,8 +16,8 @@ class BalanceViewController: UIViewController {
     private var state = BalanceViewState() {
         didSet { updateView() }
     }
-    private var notificationCenterTokens: [NSObjectProtocol] = []
     private let formatDate: (Date) -> String
+    private lazy var cancellable = Set<AnyCancellable>()
 
     init(
         service: BalanceService,
@@ -40,29 +40,25 @@ class BalanceViewController: UIViewController {
         super.viewDidLoad()
         
         rootView.refreshButton
-            .drive { [weak self] (event) in
+            .touchUpInsidePublisher
+            .sink { [weak self] _ in
                 self?.refreshBalance()
             }
-
-        notificationCenterTokens.append(
-            NotificationCenter.default.addObserver(
-                forName: UIApplication.willResignActiveNotification,
-                object: nil,
-                queue: .main
-            ) { [weak self ]_ in
+            .store(in: &cancellable)
+        
+        NotificationCenter.default
+            .publisher(for: UIApplication.willResignActiveNotification)
+            .sink { [weak self ]_ in
                 self?.state.isRedacted = true
             }
-        )
-
-        notificationCenterTokens.append(
-            NotificationCenter.default.addObserver(
-                forName: UIApplication.didBecomeActiveNotification,
-                object: nil,
-                queue: .main
-            ) { [weak self ]_ in
+            .store(in: &cancellable)
+        
+        NotificationCenter.default
+            .publisher(for: UIApplication.didBecomeActiveNotification)
+            .sink { [weak self ]_ in
                 self?.state.isRedacted = false
             }
-        )
+            .store(in: &cancellable)
     }
 
     override func viewDidAppear(_ animated: Bool) {

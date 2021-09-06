@@ -20,29 +20,13 @@ final class PublisherButton: UIButton {
     }()
     
     var touchUpInsidePublisher: AnyPublisher<UIEvent, Never> {
-        return touchUpInsideSubject.eraseToAnyPublisher()
-    }
-    
-    // MARK: - Life Cycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
+        return touchUpInsideSubject
+            .eraseToAnyPublisher()
     }
 }
 // MARK: - Handlers
 extension PublisherButton {
     @objc private func handleTap(event: UIEvent) {
         touchUpInsideSubject.send(event)
-    }
-}
-
-// MARK: - Public Functions
-extension PublisherButton {
-    public func drive(onNext: @escaping ((UIEvent) -> Void)) {
-        butonCancellable = touchUpInsidePublisher
-            .sink(receiveValue: onNext)
     }
 }
