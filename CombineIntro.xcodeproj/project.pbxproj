@@ -111,13 +111,13 @@
 			children = (
 				2CF473C326CD820D008EEDC8 /* CustomViews */,
 				2C00CC6C26CD518D0045DC23 /* Balance */,
+				2C00CC8426CD52390045DC23 /* UIViewController+Extensions.swift */,
 				2C00CC3926CD51770045DC23 /* AppDelegate.swift */,
 				2C00CC3B26CD51770045DC23 /* SceneDelegate.swift */,
 				2C00CC3F26CD51770045DC23 /* Main.storyboard */,
 				2C00CC4226CD51780045DC23 /* Assets.xcassets */,
 				2C00CC4426CD51780045DC23 /* LaunchScreen.storyboard */,
 				2C00CC4726CD51780045DC23 /* Info.plist */,
-				2C00CC8426CD52390045DC23 /* UIViewController+Extensions.swift */,
 			);
 			path = CombineIntro;
 			sourceTree = "<group>";

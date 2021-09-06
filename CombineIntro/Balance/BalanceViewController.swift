@@ -18,7 +18,6 @@ class BalanceViewController: UIViewController {
     }
     private var notificationCenterTokens: [NSObjectProtocol] = []
     private let formatDate: (Date) -> String
-    private var butonCancellable: AnyCancellable?
 
     init(
         service: BalanceService,
@@ -39,11 +38,11 @@ class BalanceViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        butonCancellable = rootView.refreshButton.touchUpInsidePublisher
-            .sink(receiveValue: { [weak self] _ in
+        
+        rootView.refreshButton
+            .drive { [weak self] (event) in
                 self?.refreshBalance()
-            })
+            }
 
         notificationCenterTokens.append(
             NotificationCenter.default.addObserver(
